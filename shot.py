@@ -6,6 +6,7 @@ class Shot(CircleShape):
     def __init__(self, x, y, radius, rotation):
         super().__init__(x, y, radius)
         self.rotation = rotation
+        self.time = 0
 
     def draw(self, screen):
         pygame.draw.circle(screen, (255, 255, 255), self.position, self.radius, 2)
@@ -13,3 +14,8 @@ class Shot(CircleShape):
     def update(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         self.position += forward * PLAYER_SHOOT_SPEED * dt
+
+        if self.time > 4:
+            pygame.sprite.Sprite.kill(self)
+
+        self.time += dt
