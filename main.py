@@ -7,8 +7,17 @@ from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
 
-def interpolate(x1: float, y1: float, x2: float, y2: float, x: float):
-    return ((y2-y1) * x + x2 * y1 - x1 * y2) / (x2 - x1)
+def reset_game(player, shots, asteroids):
+    print("Game over!")
+    player.position = pygame.Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    player.momentum = pygame.Vector2(0,0)
+    player.rotation = 0
+    remove_all(asteroids)
+    remove_all(shots)
+
+def remove_all(item_list):
+    for item in item_list: 
+        pygame.sprite.Sprite.kill(item)
 
 def main():
     pygame.init()
@@ -48,15 +57,15 @@ def main():
         for item in updatable:
             item.update(dt)
 
-        for asteroid in asteroids:
-            if asteroid.check_collision(player):
-                print("Game over!")
-                sys.exit()
+        if asteroids: 
+            for asteroid in asteroids:
+                if asteroid.check_collision(player):
+                    reset_game(player, shots, asteroids)
         
-            for shot in shots:
-                if asteroid.check_collision(shot):
-                    pygame.sprite.Sprite.kill(shot)
-                    asteroid.split()
+                for shot in shots:
+                    if asteroid.check_collision(shot):
+                        pygame.sprite.Sprite.kill(shot)
+                        asteroid.split()
 
         pygame.display.flip()
         

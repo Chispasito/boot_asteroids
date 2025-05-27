@@ -12,7 +12,6 @@ class Player(CircleShape):
 		self.forward = pygame.Vector2(0, 1).rotate(self.rotation)
 		self.momentum = pygame.Vector2(0,0)
 		self.throttle = 0.05
-		self.log_base = 3
 
 	def triangle(self):
 		right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
@@ -28,8 +27,10 @@ class Player(CircleShape):
 		self.rotation += PLAYER_TURN_SPEED * dt
 	
 	def move(self, dt):
-		self.position += self.forward * dt
-		self.momentum += self.forward * (dt/abs(dt))
+		if math.hypot(self.momentum.x + (self.forward.x * (dt/abs(dt))), \
+			self.momentum.y + (self.forward.y * (dt/abs(dt)))) < PLAYER_SPEED:
+			self.position += self.forward * dt
+			self.momentum += self.forward * (dt/abs(dt))
 	
 	def keep_momentum(self, dt):
 		self.position += (self.forward * dt) + (self.momentum * self.throttle)
